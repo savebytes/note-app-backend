@@ -22,7 +22,7 @@ class JwtAuthFilter(
             if (jwtService.validAccessToken(authHeader)){
                 val userId = jwtService.getUserIdFromToken(authHeader)
 
-                val auth = UsernamePasswordAuthenticationToken(userId, null)
+                val auth = UsernamePasswordAuthenticationToken(userId, null, emptyList())
                 SecurityContextHolder.getContext().authentication = auth
             }
         }
