@@ -1,58 +1,44 @@
 # SPS — Merchant Verification, Signup & Login Flow
 
-**Purpose:** Quick, non-technical documentation that explains how the SPS app verifies merchants, handles signup, and routes users to login.
+**Purpose:** Concise documentation of the updated SPS app flow for merchant verification, signup, and login.
 
 ---
 
-## Flow diagram
+## Flow Diagram (Mermaid)
 
-```
-[App Launch]
-     |
-[Merchant ID Verification Screen]
-     |
- POST https://sportsparkingsystem.com/api/check-merchant
-     | (body: { merchant_id })
-     |
-  +---------------------------+---------------------------+
-  |                           |                           |
-Exists (response: merchant   Not found (response: signup  |
-data) --> Redirect to Login  link + message) --> Show     |
-Screen                       dialog with button           |
-                                                           |
-                                  |                        |
-                        User taps button -> Open WebView with
-                                  signup link               |
-                                  |
-                       User completes signup & plan select
-                                  |
-                       Show message: "Open SPS app on device"
-                                  |
-                       User returns to app -> Merchant ID check
-                                  |
-                           Now exists -> Redirect to Login
+```mermaid
+flowchart TD
+  Start([Open SPS app])
+  Verify[Merchant ID verification screen\nFetch merchant_id from device]
+  API[/POST https://sportsparkingsystem.com/api/check-merchant\nBody: merchant_id/]
+  Exists{merchant_id exists?}
+  Login[Redirect to Login screen\n(merchant data received)]
+  Dialog[Show dialog: merchant not found\nMessage + signup link + button]
+  Webview[Open WebView → signup page\nUser registers & selects plan]
+  Complete[Signup complete → show "Open SPS app on Clover device" message]
+  Reopen[Re-open app → Merchant ID verification]
+  Subdomain[Create merchant subdomain\nhttps://{merchant}.sportsparkingsystem.com/api/]
+  End([User on Login / App ready])
 
-After successful verify/register: create subdomain
-https://{merchant}.sportsparkingsystem.com/api/
+  Start --> Verify --> API --> Exists
+  Exists -- Yes --> Login --> Subdomain --> End
+  Exists -- No --> Dialog --> Webview --> Complete --> Reopen --> API
 ```
 
 ---
 
-## Step-by-step (short)
+## Step-by-step
 
-1. **On app open** the Merchant ID Verification screen runs a POST to `/api/check-merchant` (full URL: `https://sportsparkingsystem.com/api/check-merchant`) with `merchant_id` from the device.
-2. **If the merchant exists** the API returns merchant-related data and the app navigates the user to the **Login** screen.
-3. **If the merchant does not exist** the API returns a signup website link + a message. The app shows a dialog with that message and a button.
-4. **When the user taps the button** the app opens a **WebView** to the signup URL. The user completes registration and selects a plan on the website. The website then tells the user to re-open the SPS app on their device.
-5. **When the user re-opens the app**, the Merchant ID verification runs again; if registration was successful the merchant will now exist and the app redirects to the **Login** screen.
-6. **Subdomain creation:** After verification/registration, a subdomain is created for the merchant in the format: `https://{merchant}.sportsparkingsystem.com/api/` (e.g. `https://ankit.sportsparkingsystem.com/api/`).
-
----
-
-## Plain‑language summary for non‑technical readers
-
-When someone opens the SPS app on their device, the app checks if their merchant account already exists by asking our server for that merchant ID. If the account exists, the person goes straight to the login page. If not, the app politely tells them they need to sign up and offers a button that opens the signup page inside the app (WebView). They sign up on the website, pick a plan, and are told to come back to the app. When they re-open the app the system sees the newly created account and brings them to the login screen. We also create a personal web address (a subdomain) for every merchant once they register or are verified.
+1. **App launch** → Merchant ID Verification screen fetches `merchant_id` from the device and calls `POST https://sportsparkingsystem.com/api/check-merchant`.
+2. **If merchant exists** → API returns merchant data → Redirect to Login.
+3. **If merchant does not exist** → API returns a signup link and message → Show dialog with button.
+4. **User taps button** → Open signup page in WebView → User registers and selects plan.
+5. **After signup** → Website prompts user to re-open SPS app on Clover device.
+6. **Re-opening app** → Merchant ID verification runs again → Merchant now exists → Redirect to Login.
+7. **Subdomain creation** → Upon successful verification or registration, create merchant-specific subdomain (e.g., `https://ankit.sportsparkingsystem.com/api/`).
 
 ---
 
-If you want, I can also export this as a one‑page PDF or expand it with UX screenshots and exact dialog text to show to your boss.
+## Conclusion
+
+The SPS app first checks if a merchant ID exists on the server. If found, the user goes straight to login. If not, the user is guided to register through an in-app signup page. Once registration is complete, the merchant ID is recognized, and the user can log in. Each verified or registered merchant gets their own dedicated subdomain for API access.
