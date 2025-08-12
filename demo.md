@@ -9,15 +9,15 @@
 ```mermaid
 flowchart TD
   Start([Open SPS app])
-  Verify[Merchant ID verification screen\\nFetch merchant_id from device]
-  API[/POST https://sportsparkingsystem.com/api/check-merchant\\nBody: merchant_id/]
+  Verify[Merchant ID verification screen\nFetch merchant_id from device]
+  API[/POST https://sportsparkingsystem.com/api/check-merchant\nBody: merchant_id/]
   Exists{merchant_id exists?}
-  Login[Redirect to Login screen\\nmerchant data received]
-  Dialog[Show dialog: merchant not found\\nMessage + signup link + button]
-  Webview[Open WebView → signup page\\nUser registers & selects plan]
-  Complete[Signup complete → show \"Open SPS app on Clover device\" message]
+  Login[Redirect to Login screen\nmerchant data received]
+  Dialog[Show dialog: merchant not found\nMessage + signup link + button]
+  Webview[Open WebView → signup page\nUser registers & selects plan]
+  Complete[Signup complete → show 'Open SPS app on Clover device' message]
   Reopen[Re-open app → Merchant ID verification]
-  Subdomain[Create merchant subdomain\\nhttps://{merchant}.sportsparkingsystem.com/api/]
+  Subdomain[Create merchant subdomain\nhttps://merchant.sportsparkingsystem.com/api/]
   End([User on Login / App ready])
 
   Start --> Verify --> API --> Exists
