@@ -9,15 +9,15 @@
 ```mermaid
 flowchart TD
   Start([Open SPS app])
-  Verify[Merchant ID verification screen\nFetch merchant_id from device]
-  API[/POST https://sportsparkingsystem.com/api/check-merchant\nBody: merchant_id/]
+  Verify[Merchant ID verification screen\\nFetch merchant_id from device]
+  API[/POST https://sportsparkingsystem.com/api/check-merchant\\nBody: merchant_id/]
   Exists{merchant_id exists?}
-  Login[Redirect to Login screen(merchant data received)]
-  Dialog[Show dialog: merchant not found\nMessage + signup link + button]
-  Webview[Open WebView → signup page\nUser registers & selects plan]
-  Complete[Signup complete → show "Open SPS app on Clover device" message]
+  Login[Redirect to Login screen\\nmerchant data received]
+  Dialog[Show dialog: merchant not found\\nMessage + signup link + button]
+  Webview[Open WebView → signup page\\nUser registers & selects plan]
+  Complete[Signup complete → show \"Open SPS app on Clover device\" message]
   Reopen[Re-open app → Merchant ID verification]
-  Subdomain[Create merchant subdomain\nhttps://{merchant}.sportsparkingsystem.com/api/]
+  Subdomain[Create merchant subdomain\\nhttps://{merchant}.sportsparkingsystem.com/api/]
   End([User on Login / App ready])
 
   Start --> Verify --> API --> Exists
@@ -42,4 +42,3 @@ flowchart TD
 ## Conclusion
 
 The SPS app first checks if a merchant ID exists on the server. If found, the user goes straight to login. If not, the user is guided to register through an in-app signup page. Once registration is complete, the merchant ID is recognized, and the user can log in. Each verified or registered merchant gets their own dedicated subdomain for API access.
-
